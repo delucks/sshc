@@ -2,6 +2,14 @@
 
 sshc is a tool for interaction with SSH config files. It retrieves host definitions from your configuration easily and allows you to copy those definitions to the `~/.ssh/config` files on remote hosts.
 
+## Installation
+
+```
+$ go get github.com/delucks/sshc
+```
+
+At some point soon I'll offer precompiled binaries with signatures - for now you need the golang toolchain to install this program.
+
 ## Usage
 
 The most basic usage is returning the definition for a single host from the file with the `get` command. The single argument to this command is the name of a host defined in your config file:
