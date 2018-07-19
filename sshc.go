@@ -121,9 +121,10 @@ func NewFindCommand() *cobra.Command {
 		Use:     "find",
 		Aliases: []string{"grep", "search"},
 		Short:   "Search through your configuration for a regex, return the whole Host block which matches it",
+		Example: "  sshc find 'IdentityFile.*rsa'\n  sshc find '10\\.0\\.1\\..'",
 		Args: func(cmd *cobra.Command, args []string) error {
 			if len(args) != 1 {
-				return ColorError("find requires one argument, a regex to search for in your ssh config", Red)
+				return fmt.Errorf("find requires one argument, a regex to search for in your ssh config\n")
 			}
 			return nil
 		},
@@ -176,14 +177,10 @@ func NewCopyCommand() *cobra.Command {
 		Long: `The copy/copy-def command takes a definition from your local SSH config and copies it into the SSH config of a remote host.
 It is implemented by opening a bash shell on the remote host that appends the definition to the file in question. The file will never be truncated.
 This command is vulnerable to shell injection if you craft a malicious remote-path argument, so be careful with this on an untrusted system.`,
+		Example: "  sshc copy <Host from config> <user@remote_host:port>",
 		Args: func(cmd *cobra.Command, args []string) error {
 			if len(args) != 2 {
-				m := `copy requires two arguments, the Host to copy from your SSH config file and a ssh connection string for the remote host it should be copied to.
-
-Example:
-  sshc copy [-p /path/on/remote/host.txt] <Host from config> <user@remote_host:port>
-`
-				return fmt.Errorf(m)
+				return fmt.Errorf("copy requires two arguments, the Host to copy from your SSH config file and a SSH connection string for the remote host it should be copied to.\n")
 			}
 			return nil
 		},
@@ -278,12 +275,13 @@ func RunGet(hostname string) error {
 
 func NewGetCommand() *cobra.Command {
 	get := &cobra.Command{
-		Use:   "get",
-		Short: "Return a single host definition from your ssh config",
-		Long:  `Find a single host definition within ~/.ssh/config and return it. The one positional argument is the name of the Host pattern to match.`,
+		Use:     "get",
+		Short:   "Return a single host definition from your ssh config",
+		Long:    `Find a single host definition within ~/.ssh/config and return it. The one positional argument is the name of the Host pattern to match.`,
+		Example: "  sshc get <Host from config>",
 		Args: func(cmd *cobra.Command, args []string) error {
 			if len(args) != 1 {
-				return fmt.Errorf("get requires one argument, a Host to return from your SSH config file\n\nExample:\n  sshc get <remote>\n")
+				return fmt.Errorf("get requires one argument, a Host to return from your SSH config file\n")
 			}
 			return nil
 		},
@@ -305,7 +303,7 @@ func NewRootCmd() *cobra.Command {
 		Long:  `This tool understands the format of your SSH configuration and lets you pull out information from it and copy definitions to remote hosts`,
 	}
 	root.PersistentFlags().StringVarP(&UserConfigFile, "config", "c", "~/.ssh/config", "Path to ssh config file")
-	root.PersistentFlags().BoolVar(&UseANSIColor, "color", false, "Use ANSI color escapes")
+	root.PersistentFlags().BoolVar(&UseANSIColor, "color", false, "Use ANSI terminal colors")
 	return root
 }
 
