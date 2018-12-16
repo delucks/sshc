@@ -6,11 +6,13 @@ sshc is a tool for interaction with SSH config files. It retrieves host definiti
 
 ## Installation
 
+`sshc` is distributed as a statically compiled binary for a number of target platforms. You can find compressed binaries for `(arm, 386, amd64) x (openbsd, netbsd, freebsd, linux) + osx-amd64` over at [the releases page](https://github.com/delucks/sshc/releases).
+
+If you have the golang toolchain installed, you can install with `go get`:
+
 ```
 $ go get github.com/delucks/sshc
 ```
-
-At some point soon I'll offer precompiled binaries with signatures - for now you need the golang toolchain to install this program.
 
 ## Usage
 
