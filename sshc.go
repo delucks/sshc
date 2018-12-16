@@ -1,21 +1,24 @@
 package main
 
 import (
+	"encoding/json"
 	"fmt"
-	"github.com/kevinburke/ssh_config"
-	"github.com/spf13/cobra"
 	"log"
 	"os"
 	"os/exec"
 	"path/filepath"
 	"regexp"
 	"strings"
+
+	"github.com/kevinburke/ssh_config"
+	"github.com/spf13/cobra"
 )
 
 // Variables holding data for Cobra flags used in the command-line interface
 var (
 	UserConfigFile      string
 	CopyDestinationPath string
+	JSONOutput          bool
 	UseANSIColor        bool
 	RegexIgnoreCase     bool
 )
@@ -269,6 +272,23 @@ func RunGet(hostname string) error {
 	if hostdef == nil {
 		return ColorError("No matching hosts", Red)
 	}
+	if JSONOutput {
+		output := map[string]interface{}{}
+		for _, n := range hostdef.Nodes {
+			trimmed := strings.TrimLeft(n.String(), " \t")
+			if trimmed == "" {
+				continue
+			}
+			spl := strings.SplitN(trimmed, " ", 2)
+			output[spl[0]] = spl[1]
+		}
+		blob, err := json.MarshalIndent(output, "", "  ")
+		if err != nil {
+			return err
+		}
+		fmt.Printf("%s\n", blob)
+		return nil
+	}
 	fmt.Println(hostdef)
 	return nil
 }
@@ -293,6 +313,7 @@ func NewGetCommand() *cobra.Command {
 			}
 		},
 	}
+	get.Flags().BoolVarP(&JSONOutput, "json-output", "j", false, "Output this host in JSON format")
 	return get
 }
 

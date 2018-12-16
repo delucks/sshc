@@ -27,6 +27,20 @@ Host myremotehost
   IdentityFile %d/.ssh/rsa_key
 ```
 
+You can also optionally convert the host definition to JSON, with the following result:
+
+```
+$ sshc get -j myremotehost
+{
+  "HostName" "127.0.0.1",
+  "Port" "22",
+  "User" "delucks",
+  "IdentityFile" "%d/.ssh/rsa_key"
+}
+```
+
+This is useful for pulling out specific pieces of information using a json query tool like `jq`. For example, `sshc get -j myremotehost | jq .HostName` is a quick way of returning just the hostname field of an entry in your config file. I use this for constructing URLs on remote servers like `curl -s "http://$(sshc get -j myremotehost | jq .HostName):8080/path/index.html"`.
+
 You can find the names of all the host definitions in your file by using `sshc hosts`:
 
 ```
@@ -91,15 +105,3 @@ From **ssh-config**: I like this tool a lot and started off using it, but the la
 `sshc` is also novel in a couple ways:
 - Copying definitions from the local host to a remote `~/.ssh/config`
 - Choice of golang; small footprint & installation from a single binary
-
-The rest of this README is scratch space left over from planning.
-
-```
-$ sshc get -j hostname
-{"hostname": {
-  "HostName": "127.0.0.1",
-  "Port": "22",
-  "User": "delucks",
-  "IdentityFile": "%d/.ssh/rsa_key",
-}}
-```
