@@ -1,5 +1,7 @@
 # sshc
 
+[![Build Status](https://travis-ci.org/delucks/sshc.svg?branch=master)](https://travis-ci.org/delucks/sshc)
+
 sshc is a tool for interaction with SSH config files. It retrieves host definitions from your configuration easily and allows you to copy those definitions to the `~/.ssh/config` files on remote hosts.
 
 ## Installation
