@@ -1,0 +1,24 @@
+sudo: false
+language: go
+go:
+- 1.11.x
+- tip
+before_install:
+- export PATH=/home/travis/gopath/bin:$PATH
+install:
+- go get ./...
+script:
+- go test ./...
+before_deploy:
+- make clean
+- make release
+deploy:
+  provider: releases
+  skip_cleanup: true
+  api_key:
+    secure: T9F8caOCTsnytyLYEiI3nqcETF4iSGzAXzAMMNBxhbW7eciYchU7b3gyWpQdkxSC929sEsrkeGtjDR3t9dNhlUtzOSuCbNq88Cncmp/yCcGrDy8UngyVLusqGn9j1XLdMaLNmUSsLZ2ASDE2dLfSPAsYRuggTcJZhAmmYrr4Jy2CpMt1E1c74cbgJ8c1yTOaaAaXhZtv5qiztcEMGB+ssB8IlTJaCQBbuM4ygeJiIumz51oQeH5UtttHy0NdgqaTUnYX+ntlXePIMcZcW3+bf+GT1RPsZx5RwPMNwxBi7i79tqCbw0363La6zzfTHIIEAtuzycUshfcGF1kBae7oxjCBXEq4Ac3OnF/64BLayOIy8592tVVYtgsnYtCHvp4uTgbYk3h9RIG6DXZbjWBtLmF57nKxm/mGSNuIvcFjY76ZqVKgQ/fBlvesV4DisitkmhrLu6G9/I9QmbjPMDjoD9OEP2x51bZNTxjfvHvLrHRG/6WbwBGyxFmCu6iW1TA9cYzuKavEqt7Vqlb/iIbd1uoJq6+9BwPPgllN+MQyDdDoyE6vsm5Ipiq1b+m7x9R1F/9LPu5cl3TgReTaOoXCNE4whmaqSY9BbwdjfIsiygnANWgTOpbMaqiO4DZ14IkupdpG2u4lL6z35rE2DHLPSRfGbMnq/zLwola0vhsb+z0=
+  file_glob: true
+  file: build/*
+  on:
+    repo: delucks/sshc
+    tags: true
