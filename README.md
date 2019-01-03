@@ -16,7 +16,16 @@ $ go get github.com/delucks/sshc
 
 ## Usage
 
-The most basic usage is returning the definition for a single host from the file with the `get` command. The single argument to this command is the name of a host defined in your config file:
+You can find the names of all the host definitions in your file by using `sshc hosts`:
+
+```
+$ sshc hosts
+myremotehost
+*
+boxinthecloud
+```
+
+To return the definition for a single host from your config, use the `get` command. The single argument to this command is the name of a host defined in your config file:
 
 ```
 $ sshc get myremotehost
@@ -40,15 +49,6 @@ $ sshc get -j myremotehost
 ```
 
 This is useful for pulling out specific pieces of information using a json query tool like `jq`. For example, `sshc get -j myremotehost | jq .HostName` is a quick way of returning just the hostname field of an entry in your config file. I use this for constructing URLs on remote servers like `curl -s "http://$(sshc get -j myremotehost | jq .HostName):8080/path/index.html"`.
-
-You can find the names of all the host definitions in your file by using `sshc hosts`:
-
-```
-$ sshc hosts
-myremotehost
-*
-boxinthecloud
-```
 
 For a more precise look through your configuration, you can search through all lines with a regular expression using `sshc find`. Why is this better than using `egrep`? `sshc` will print the host definition that match your regex cleanly, without use of the `-C` context flags. If you use ANSI color (with `--color`), the matching parts of the host definitions will get *fancy terminal colors*.
 
