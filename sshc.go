@@ -21,10 +21,11 @@ var (
 	JSONOutput          bool
 	UseANSIColor        bool
 	RegexIgnoreCase     bool
+	IncludeWildcards    bool
 )
 
-func FindSpecificHost(c *ssh_config.Config, alias string) *ssh_config.Host {
-	for _, host := range NonWildcardHosts(c) {
+func FindSpecificHost(c *ssh_config.Config, alias string, includeWilcards bool) *ssh_config.Host {
+	for _, host := range filterHosts(c, includeWilcards) {
 		if host.Matches(alias) {
 			return host
 		}
@@ -32,10 +33,18 @@ func FindSpecificHost(c *ssh_config.Config, alias string) *ssh_config.Host {
 	return nil
 }
 
-func NonWildcardHosts(c *ssh_config.Config) []*ssh_config.Host {
+func filterHosts(c *ssh_config.Config, includeWildcards bool) []*ssh_config.Host {
 	var filtered []*ssh_config.Host
 	for _, host := range c.Hosts {
-		if !strings.ContainsRune(host.Patterns[0].String(), '*') {
+		if strings.ContainsRune(host.Patterns[0].String(), '*') {
+			if len(host.Nodes) == 0 {
+				// This is the implicit * block added by the parser at the beginning of the file. Skip it to avoid distorting results
+				continue
+			}
+			if includeWildcards {
+				filtered = append(filtered, host)
+			}
+		} else {
 			filtered = append(filtered, host)
 		}
 	}
@@ -149,7 +158,7 @@ func RunCopy(hostname string, remote_uri string) error {
 	if err != nil {
 		return err
 	}
-	hostdef := FindSpecificHost(cfg, hostname)
+	hostdef := FindSpecificHost(cfg, hostname, false)
 	if hostdef == nil {
 		return ColorError("Host argument doesn't match any definitions in your SSH config file", Red)
 	}
@@ -268,7 +277,7 @@ func RunGet(hostname string) error {
 	if err != nil {
 		return err
 	}
-	hostdef := FindSpecificHost(cfg, hostname)
+	hostdef := FindSpecificHost(cfg, hostname, IncludeWildcards)
 	if hostdef == nil {
 		return ColorError("No matching hosts", Red)
 	}
@@ -314,6 +323,7 @@ func NewGetCommand() *cobra.Command {
 		},
 	}
 	get.Flags().BoolVarP(&JSONOutput, "json-output", "j", false, "Output this host in JSON format")
+	get.Flags().BoolVarP(&IncludeWildcards, "include-wildcards", "w", false, "Include wildcard host-definitions (which typically match everything)")
 	return get
 }
 
