@@ -247,7 +247,7 @@ func RunHosts() error {
 	if err != nil {
 		return err
 	}
-	for _, host := range cfg.Hosts {
+	for _, host := range filterHosts(cfg, true) {
 		for _, p := range host.Patterns {
 			fmt.Println(p)
 		}
