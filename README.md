@@ -76,6 +76,8 @@ $ sshc copy boxinthecloud user@myremotehost:9999
 
 Note that the second argument to this command is a full SSH connection string; you can override users, ports, etc here because it's used in the invocation of `ssh`.
 
+I wrote a [blog post introducing `sshc`](https://jamieluck.com/introducing-sshc.html), for more examples of how to use the tool give it a read.
+
 ## Prior Art
 
 ### ssh-config
